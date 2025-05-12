@@ -10,16 +10,33 @@ A full-stack Course Selling Application where users can browse, purchase, and ma
 
 🎓 Courses
 1. Admin can:
-  - Create, update, delete courses
-  - View all purchased courses by users
+- Create, update, delete courses
+- View all purchased courses by users
 
 2. Users can:
-  - View published courses
-  - Purchase courses
-  - View purchased courses
+- View published courses
+- Purchase courses
+- View purchased courses
   
 🛠️ Technologies Used
 - Backend: Node.js, Express.js
 - Database: MongoDB (with Mongoose)
 - Authentication: JSON Web Tokens (JWT)
 - Environment: Postman for testing APIs
+
+🔐 API Endpoints
+Auth
+- POST /admin/signup
+- POST /admin/login
+- POST /users/signup
+- POST /users/login
+
+Admin Routes
+- POST /admin/courses
+- PUT /admin/courses/:courseId
+- GET /admin/courses
+
+User Routes
+- GET /users/courses
+- POST /users/courses/:courseId
+- GET /users/purchasedCourses
