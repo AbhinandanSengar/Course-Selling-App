@@ -241,9 +241,9 @@ adminRouter.get("/course/bulk", adminMiddleware, async function(req, res) {
     const adminId = req.adminId;
 
     try {
-        const courses = await courseModel.find({ creatorId: adminId });
+        const adminCourses = await courseModel.find({ creatorId: adminId });
 
-        if(courses.length === 0) {
+        if(adminCourses.length === 0) {
             return res.status(404).send({
                 message: "No courses found"
             });
@@ -251,7 +251,7 @@ adminRouter.get("/course/bulk", adminMiddleware, async function(req, res) {
     
         res.status(200).send({
             message: "All courses are sucessfully displayed",
-            course: courses
+            course: adminCourses
         });
     } catch(error) {
         console.log("Course fetch error: ", error);
