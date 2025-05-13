@@ -237,10 +237,29 @@ adminRouter.delete("/course/:courseId", adminMiddleware, async function(req, res
 });
 
 //Course Display Route
-adminRouter.get("/course/bulk", adminMiddleware, function(req, res) {
-    res.send({
-        message: "courses displayed!"
-    });
+adminRouter.get("/course/bulk", adminMiddleware, async function(req, res) {
+    const adminId = req.adminId;
+
+    try {
+        const courses = await courseModel.find({ creatorId: adminId });
+
+        if(courses.length === 0) {
+            return res.status(404).send({
+                message: "No courses found"
+            });
+        }
+    
+        res.status(200).send({
+            message: "All courses are sucessfully displayed",
+            course: courses
+        });
+    } catch(error) {
+        console.log("Course fetch error: ", error);
+        res.status(500).send({
+            message: "Internal server error",
+            error: error.message
+        });
+    }
 });
 
 module.exports = {
