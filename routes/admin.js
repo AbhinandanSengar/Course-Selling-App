@@ -196,7 +196,7 @@ adminRouter.put("/course/:courseId", adminMiddleware, async function(req, res) {
         res.status(201).send({
             message: "Course updated succesfully",
             course: existingCourse
-        })
+        });
     } catch(error) {
         console.error("Course Updation error: ", error);
         res.status(500).send({
@@ -207,10 +207,33 @@ adminRouter.put("/course/:courseId", adminMiddleware, async function(req, res) {
 });
 
 //Course Deletion Route
-adminRouter.delete("/course", adminMiddleware, function(req, res) {
-    res.send({
-        message: "course deleted!"
-    });
+adminRouter.delete("/course/:courseId", adminMiddleware, async function(req, res) {
+    const courseId = req.params.courseId;
+    const adminId = req.adminId;
+
+    try {
+        const deletedCourse = await courseModel.findOneAndDelete({
+            _id: courseId,
+            creatorId: adminId
+        });
+
+        if(!deletedCourse) {
+            return res.status(404).send({
+                message: "Course not found"
+            });
+        }
+
+        res.status(200).send({
+            message: "Course deleted succesfully!",
+            course: deletedCourse
+        });
+    } catch(error) {
+        console.error("Course deletion error: ", error);
+        res.status(500).send({
+            message: "Internal server error",
+            error: error.message
+        });
+    }
 });
 
 //Course Display Route
