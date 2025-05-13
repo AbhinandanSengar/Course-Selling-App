@@ -4,7 +4,7 @@ const { z } = require("zod");
 const { JWT_USER_PASSWORD } = require("../config");
 
 const { Router } = require("express");
-const { userModel } = require("../db");
+const { userModel, courseModel, purchaseModel } = require("../db");
 const { userMiddleware } = require("../middleware/user");
 const userRouter = Router();
 
@@ -110,10 +110,29 @@ userRouter.post("/signin", async function(req, res) {
 });
 
 //Purchased Course Display Route
-userRouter.get("/purchases", userMiddleware, function(req, res) {
-    res.json({
-        message: "courses purchased by user"
-    });
+userRouter.get("/purchases", userMiddleware, async function(req, res) {
+    const userId = req.userId;
+
+    try {
+        const userCourses = await purchaseModel.find({ userId });
+
+        if(userCourses.length === 0) {
+            return res.status(404).send({
+                message: "No purchased courses found"
+            });
+        }
+
+        res.status(200).send({
+            message: "Courses displayed successfully",
+            courses: userCourses
+        });
+    } catch(error) {
+        console.error("Course display error: ", error);
+        res.status(500).send({
+            message: "Internal server error",
+            error: error.message
+        });
+    }
 });
 
 module.exports = {
