@@ -114,17 +114,23 @@ userRouter.get("/purchases", userMiddleware, async function(req, res) {
     const userId = req.userId;
 
     try {
-        const userCourses = await purchaseModel.find({ userId });
+        const userPurchases = await purchaseModel.find({ userId });
 
-        if(userCourses.length === 0) {
+        if(userPurchases.length === 0) {
             return res.status(404).send({
                 message: "No purchased courses found"
             });
         }
 
+        const courseIds = userPurchases.map(purchase => purchase.courseId);
+
+        const courseDetails = await courseModel.find({
+            _id: { $in: courseIds}
+        });
+
         res.status(200).send({
             message: "Courses displayed successfully",
-            courses: userCourses
+            courses: courseDetails
         });
     } catch(error) {
         console.error("Course display error: ", error);
