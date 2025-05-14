@@ -2,7 +2,8 @@ const jwt = require("jsonwebtoken");
 const { JWT_USER_PASSWORD } = require("../config");
 
 function userMiddleware(req, res, next) {
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
 
     if(!token) {
         return res.status(400).send({
