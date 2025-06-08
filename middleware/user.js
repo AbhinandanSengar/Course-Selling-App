@@ -19,7 +19,7 @@ function userMiddleware(req, res, next) {
                 message: "User not found"
             });
         } else {
-            req.userId = decodedData.id;
+            req.userId = decodedData.userId;
             next();
         }
     } catch(error) {

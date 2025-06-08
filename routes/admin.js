@@ -169,7 +169,7 @@ adminRouter.put("/course/:courseId", adminMiddleware, async function(req, res) {
     });
 
     const parsedData = updatedCourseSchema.safeParse(req.body);
-    if(!parsedData) {
+    if(!parsedData.success) {
         return res.status(400).send({
             message: "Invalid format",
             error: parsedData.error
@@ -177,25 +177,21 @@ adminRouter.put("/course/:courseId", adminMiddleware, async function(req, res) {
     }
 
     try {
-        const existingCourse = await courseModel.findById(courseId);
-        if(!existingCourse) {
-            return res.status(404).send({
-                message: "Course not found"
-            });
-        }
-
-        if(existingCourse.creatorId.toString() !== adminId) {
+        const updatedCourse = await courseModel.findOneAndUpdate({
+            _id: courseId,
+            creatorId: adminId
+        }, parsedData.data, {
+            new: true //for returning the updated course
+        });
+        if(!updatedCourse) {
             return res.status(403).send({
-                message: "Unauthorized"
+                message: "Course not found or unauthorized"
             });
         }
 
-        Object.assign(existingCourse, parsedData.data);
-        await existingCourse.save();
-
-        res.status(201).send({
+        res.status(200).send({
             message: "Course updated succesfully",
-            course: existingCourse
+            course: updatedCourse
         });
     } catch(error) {
         console.error("Course Updation error: ", error);
